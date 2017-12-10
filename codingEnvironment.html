@@ -238,6 +238,11 @@
      **************************************/
     function runCode() {
         code = Blockly.JavaScript.workspaceToCode(workspace);
+        arrayOfChickenPoses = [];
+        arrayOfCatPoses = [];
+        words = []; 
+        indexToArrays = 0;
+        numOfInstructions = 0;
         var formattedCode = code.split(";");
         console.log(formattedCode);
         document.getElementById('codeArea').innerHTML = '';
