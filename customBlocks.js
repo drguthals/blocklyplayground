@@ -16,6 +16,20 @@ Blockly.Blocks['whenrunclicked'] = {
     }
 };
 
+Blockly.Blocks['say'] = {
+      init: function() {
+        this.appendValueInput("sayText")
+            .setCheck("String")
+            .appendField("Say");
+        this.setInputsInline(true);
+        this.setPreviousStatement(true, null);
+        this.setNextStatement(true, null);
+        this.setColour(330);
+     this.setTooltip("Say");
+     this.setHelpUrl("Say");
+    }
+};
+
 Blockly.Blocks['clearscreen'] = {
     init: function() {
         this.appendDummyInput()
@@ -31,8 +45,21 @@ Blockly.Blocks['clearscreen'] = {
 Blockly.Blocks['catpose'] = {
     init: function() {
         this.appendDummyInput()
-            .appendField("Change Pose")
+            .appendField("Change Cat Pose")
             .appendField(new Blockly.FieldDropdown([["1","1"], ["2","2"], ["3","3"]]), "catIndex");
+        this.setPreviousStatement(true, null);
+        this.setNextStatement(true, null);
+        this.setColour(175);
+        this.setTooltip("");
+        this.setHelpUrl("");
+    }
+};
+
+Blockly.Blocks['chickenpose'] = {
+    init: function() {
+        this.appendDummyInput()
+            .appendField("Change Chicken Pose")
+            .appendField(new Blockly.FieldDropdown([["1","1"], ["2","2"], ["3","3"]]), "chickenIndex");
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
         this.setColour(175);
@@ -54,6 +81,18 @@ Blockly.JavaScript['clearscreen'] = function(block) {
 
 Blockly.JavaScript['catpose'] = function(block) {
     var dropdown_catindex = block.getFieldValue('catIndex');
-    var blockCode = 'updatePose('+dropdown_catindex+');';
+    var blockCode = 'updateCatPose('+dropdown_catindex+');';
+    return blockCode;
+};
+
+Blockly.JavaScript['chickenpose'] = function(block) {
+    var dropdown_chickenindex = block.getFieldValue('chickenIndex');
+    var blockCode = 'updateChickenPose('+dropdown_chickenindex+');';
+    return blockCode;
+};
+
+Blockly.JavaScript['say'] = function(block) {
+    var text = Blockly.JavaScript.valueToCode(block, 'sayText', Blockly.JavaScript.ORDER_ATOMIC);
+    var blockCode = 'say('+ text +');';
     return blockCode;
 };

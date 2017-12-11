@@ -79,6 +79,17 @@
                         <img src="images/cat3_numbered.png" style="margin-left:5px;margin-top:5px;outline-style: solid;outline-width: 1px;height:180px;" />
                     </td>
                 </tr>
+                <tr>
+                    <td>
+                        <img src="images/chicken1_numbered.png" style="margin-left:5px;margin-top:5px;outline-style: solid;outline-width: 1px;height:180px;" />
+                    </td>
+                    <td>
+                        <img src="images/chicken2_numbered.png" style="margin-left:5px;margin-top:5px;outline-style: solid;outline-width: 1px;height:180px;" />
+                    </td>
+                    <td>
+                        <img src="images/chicken3_numbered.png" style="margin-left:5px;margin-top:5px;outline-style: solid;outline-width: 1px;height:180px;" />
+                    </td>
+                </tr>
             </table>
         </div>
     </div>
@@ -97,8 +108,14 @@
         <block type="whenrunclicked"></block>
         <block type="clearscreen"></block>
     </category>
-    <category name="cats" colour="175">
-        <block type="catpose"></block>
+    <category name="animals" colour="175">
+        <block type="say"></block>
+        <category name="cats" colour="175">
+            <block type="catpose"></block>
+        </category>
+        <category name="chickens" colour="175">
+            <block type="chickenpose"></block>
+        </category>
     </category>
 
     <sep></sep>
@@ -144,7 +161,6 @@
     canvas.height = 480;
 
     var ctx = document.getElementById('catAnimation').getContext('2d');
-
     var animation = true;
 
     /*********************
@@ -184,6 +200,9 @@
     var catImage = new Image();
     catImage.src = "images/cat1.png";
 
+    var chickenImage = new Image();
+    chickenImage.src = "images/chicken1.png";
+
     var cat1 = sprite({
         context: canvas.getContext("2d"),
         width: 500,
@@ -193,20 +212,37 @@
         y: 0
     });
 
+    var chicken1 = sprite({
+        context: canvas.getContext("2d"),
+        width: 500,
+        height: 500,
+        image: chickenImage,
+        x: 250,
+        y: 0
+    });
+
     /******************
      * Show the cat *
      ******************/
     cat1.render();
+    chicken1.render();
 
     var indexToArrays = 0;
     var numOfInstructions = 0;
-    var arrayOfPoses = [];
+    var arrayOfCatPoses = [];
+    var arrayOfChickenPoses = [];
+    var words = [];
 
     /**************************************
      * RUN and STOP buttons on the canvas *
      **************************************/
     function runCode() {
         code = Blockly.JavaScript.workspaceToCode(workspace);
+        arrayOfChickenPoses = [];
+        arrayOfCatPoses = [];
+        words = []; 
+        indexToArrays = 0;
+        numOfInstructions = 0;
         var formattedCode = code.split(";");
         console.log(formattedCode);
         document.getElementById('codeArea').innerHTML = '';
@@ -227,14 +263,33 @@
         window.requestAnimationFrame(animate);
     }
 
-    function updatePose(poseNum){
-        arrayOfPoses.push(poseNum);
+    function updateCatPose(poseNum){
+        arrayOfCatPoses.push(poseNum);
+        var prev = 1; 
+        if (arrayOfChickenPoses.length > 0) {
+            prev = arrayOfChickenPoses[arrayOfChickenPoses.length-1];
+        }
+        arrayOfChickenPoses.push(prev);
         numOfInstructions++;
     }
 
+    function updateChickenPose(poseNum){
+        arrayOfChickenPoses.push(poseNum);
+        var prev = 1; 
+        if (arrayOfCatPoses.length > 0) {
+            prev = arrayOfCatPoses[arrayOfCatPoses.length-1];
+        }
+        arrayOfCatPoses.push(prev);
+        numOfInstructions++;
+    }
     function animate() {
         setTimeout(function() {
-            setcatImage(arrayOfPoses[indexToArrays]);
+            clearCanvas();
+            setcatImage(arrayOfCatPoses[indexToArrays]);
+            setchickenImage(arrayOfChickenPoses[indexToArrays]);
+
+            ctx.font = "30px Arial";
+            ctx.fillText(words[indexToArrays % words.length], 250, 400);
 
             indexToArrays++;
 
@@ -254,6 +309,7 @@
     function resetCanvas(){
         clearCanvas();
         setcatImage(1);
+        setchickenImage(1);
     }
 
     /*************************************
@@ -275,13 +331,27 @@
     function setcatImage(catIndex){
         if(!catIndex)
           catIndex = 1;
-        clearCanvas();
         catImage.src = "images/cat"+catIndex+".png";
         ctx.drawImage(cat1.image, cat1.x, cat1.y);
         ctx.save();
         ctx.restore();
     }
 
+    /*****************************
+     * Changing the chickens's Pose *
+     *****************************/
+    function setchickenImage(chickenIndex){
+        if(!chickenIndex)
+          chickenIndex = 1;
+        chickenImage.src = "images/chicken"+chickenIndex+".png";
+        ctx.drawImage(chicken1.image, chicken1.x, chicken1.y);
+        ctx.save();
+        ctx.restore();
+    }
+
+    function say(text){
+        words.push(text);
+    }
     /***********************
      * Clearing the Canvas *
      ***********************/
