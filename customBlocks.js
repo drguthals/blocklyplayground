@@ -31,7 +31,7 @@ Blockly.Blocks['clearscreen'] = {
 Blockly.Blocks['catpose'] = {
     init: function() {
         this.appendDummyInput()
-            .appendField("Change Pose")
+            .appendField("Change Cat Pose")
             .appendField(new Blockly.FieldDropdown([["1","1"], ["2","2"], ["3","3"]]), "catIndex");
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
@@ -40,6 +40,34 @@ Blockly.Blocks['catpose'] = {
         this.setHelpUrl("");
     }
 };
+
+Blockly.Blocks['dogpose'] = {
+    init: function() {
+        this.appendDummyInput()
+            .appendField("Change Dog Pose")
+            .appendField(new Blockly.FieldDropdown([["1","1"], ["2", "2"], ["3", "3"]]), "dogIndex");
+        this.setPreviousStatement(true, null);
+        this.setNextStatement(true, null);
+        this.setColour(120);
+        this.setTooltip("");
+        this.setHelpUrl("");
+    }
+};
+
+Blockly.Blocks['animalSay'] = {
+  init: function() {
+    this.appendValueInput('text')
+        .setCheck('String')
+        .appendField('Say');
+    this.setNextStatement(true);
+    this.setPreviousStatement(true);
+    this.setInputsInline(true);
+    this.setColour(0);
+    this.setTooltip('Returns number of letters in the provided text.');
+    this.setHelpUrl('http://www.w3schools.com/jsref/jsref_length_string.asp');
+  }
+};
+
 
 Blockly.JavaScript['whenrunclicked'] = function(block) {
     var statements_name = Blockly.JavaScript.statementToCode(block, 'NAME');
@@ -54,6 +82,20 @@ Blockly.JavaScript['clearscreen'] = function(block) {
 
 Blockly.JavaScript['catpose'] = function(block) {
     var dropdown_catindex = block.getFieldValue('catIndex');
-    var blockCode = 'updatePose('+dropdown_catindex+');';
+    var blockCode = 'updateCatPose('+dropdown_catindex+');';
     return blockCode;
 };
+
+Blockly.JavaScript['dogpose'] = function(block) {
+    var dropdown_dogIndex = block.getFieldValue('dogIndex');
+    var blockCode = 'updateDogPose('+dropdown_dogIndex+');';
+    return blockCode;
+};
+
+Blockly.JavaScript['animalSay'] = function(block) {
+    var words = block.getFieldValue('text');
+    var blockCode = 'say('+words+');';
+    return blockCode;
+}
+
+
