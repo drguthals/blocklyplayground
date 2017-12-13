@@ -31,7 +31,7 @@ Blockly.Blocks['clearscreen'] = {
 Blockly.Blocks['catpose'] = {
     init: function() {
         this.appendDummyInput()
-            .appendField("Change Pose")
+            .appendField("Change Cat Pose")
             .appendField(new Blockly.FieldDropdown([["1","1"], ["2","2"], ["3","3"]]), "catIndex");
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
@@ -39,6 +39,34 @@ Blockly.Blocks['catpose'] = {
         this.setTooltip("");
         this.setHelpUrl("");
     }
+};
+
+Blockly.Blocks['dogpose'] = {
+    init: function() {
+        this.appendDummyInput()
+            .appendField("Change Dog Pose")
+            .appendField(new Blockly.FieldDropdown([["1","1"], ["2","2"], ["3","3"]]), "dogIndex");
+        this.setPreviousStatement(true, null);
+        this.setNextStatement(true, null);
+        this.setColour(105);
+        this.setTooltip("");
+        this.setHelpUrl("");
+    }
+};
+
+Blockly.Blocks['say'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Say");
+    this.appendValueInput("word")
+        .setCheck("String");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(0);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
 };
 
 Blockly.JavaScript['whenrunclicked'] = function(block) {
@@ -54,6 +82,18 @@ Blockly.JavaScript['clearscreen'] = function(block) {
 
 Blockly.JavaScript['catpose'] = function(block) {
     var dropdown_catindex = block.getFieldValue('catIndex');
-    var blockCode = 'updatePose('+dropdown_catindex+');';
+    var blockCode = 'updateCatPose('+dropdown_catindex+');';
     return blockCode;
+};
+
+Blockly.JavaScript['dogpose'] = function(block) {
+    var dropdown_dogindex = block.getFieldValue('dogIndex');
+    var blockCode = 'updateDogPose('+dropdown_dogindex+');';
+    return blockCode;
+};
+
+Blockly.JavaScript['say'] = function(block) {
+  var value_word = Blockly.JavaScript.valueToCode(block, 'word', Blockly.JavaScript.ORDER_ATOMIC);
+  var code = 'say('+value_word+');';
+  return code;
 };

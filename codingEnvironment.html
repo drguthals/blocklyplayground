@@ -62,7 +62,7 @@
     <div style="background-color: #FFFFFF; float: left; width: 49%; height: 800px">
         <div style="height:53%;width:98%;outline-style: solid;outline-width: 1px;text-align:center;margin-left:5px;margin-top:5px;">
             <div style="position:absolute;z-index:4;width:45%;height:37%">
-                <canvas id="catAnimation"></canvas>
+                <canvas id="animation"></canvas>
             </div>
         </div>
         <hr>
@@ -77,6 +77,17 @@
                     </td>
                     <td>
                         <img src="images/cat3_numbered.png" style="margin-left:5px;margin-top:5px;outline-style: solid;outline-width: 1px;height:180px;" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <img src="images/dog1_numbered.png" style="margin-left:5px;margin-top:5px;outline-style: solid;outline-width: 1px;height:180px;" />
+                    </td>
+                    <td>
+                        <img src="images/dog2_numbered.png" style="margin-left:5px;margin-top:5px;outline-style: solid;outline-width: 1px;height:180px;" />
+                    </td>
+                    <td>
+                        <img src="images/dog3_numbered.png" style="margin-left:5px;margin-top:5px;outline-style: solid;outline-width: 1px;height:180px;" />
                     </td>
                 </tr>
             </table>
@@ -97,8 +108,14 @@
         <block type="whenrunclicked"></block>
         <block type="clearscreen"></block>
     </category>
-    <category name="cats" colour="175">
-        <block type="catpose"></block>
+    <category name="animals" colour="175">
+        <block type="say"></block>
+        <category name="cats" colour="175">
+            <block type="catpose"></block>
+        </category>
+        <category name="dogs" colour="175">
+            <block type="dogpose"></block>
+        </category>
     </category>
 
     <sep></sep>
@@ -139,11 +156,11 @@
     /********************
      * Setup the Canvas *
      ********************/
-    var canvas = document.getElementById("catAnimation");
+    var canvas = document.getElementById("animation");
     canvas.width = 480;
     canvas.height = 480;
 
-    var ctx = document.getElementById('catAnimation').getContext('2d');
+    var ctx = document.getElementById('animation').getContext('2d');
 
     var animation = true;
 
@@ -193,14 +210,32 @@
         y: 0
     });
 
-    /******************
-     * Show the cat *
-     ******************/
+    /**********************
+     * Defining the dog *
+     **********************/
+    var dogImage = new Image();
+    dogImage.src = "images/dog1.png";
+
+    var dog1 = sprite({
+        context: canvas.getContext("2d"),
+        width: 500,
+        height: 500,
+        image: dogImage,
+        x: 200,
+        y: 0
+    });
+
+    /************************
+     * Show the cat and dog *
+     ************************/
     cat1.render();
+    dog1.render();
 
     var indexToArrays = 0;
     var numOfInstructions = 0;
-    var arrayOfPoses = [];
+    var arrayOfCatPoses = [];
+    var arrayOfDogPoses = [];
+    var arrayOfWords = [];
 
     /**************************************
      * RUN and STOP buttons on the canvas *
@@ -227,14 +262,34 @@
         window.requestAnimationFrame(animate);
     }
 
-    function updatePose(poseNum){
-        arrayOfPoses.push(poseNum);
-        numOfInstructions++;
+    var catPose = 1;
+    var dogPose = 1;
+    var word = '';
+
+    /********************************
+     * Method to re-draw the images *
+     ********************************/
+    function setImages(){
+        clearCanvas();
+        catImage.src = "images/cat"+catPose+".png";
+        ctx.drawImage(cat1.image, cat1.x, cat1.y);
+        dogImage.src = "images/dog"+dogPose+".png";
+        ctx.drawImage(dog1.image, dog1.x, dog1.y);
+        ctx.font = "30px Arial";
+        ctx.fillText(word,200,400);
+        ctx.save();
+        ctx.restore();
     }
 
     function animate() {
         setTimeout(function() {
-            setcatImage(arrayOfPoses[indexToArrays]);
+            catPose = arrayOfCatPoses[indexToArrays];
+            dogPose = arrayOfDogPoses[indexToArrays];
+            word = arrayOfWords[indexToArrays];
+            console.log(arrayOfCatPoses);
+            console.log(arrayOfDogPoses);
+            console.log(arrayOfWords);
+            setImages();
 
             indexToArrays++;
 
@@ -249,12 +304,16 @@
 
     function stopCode() {
         animation = false;
+        indexToArrays = 0;
+        numOfInstructions = 0;
+        arrayOfCatPoses = [];
+        arrayOfDogPoses = [];
+        arrayOfWords = [];
     }
 
     function resetCanvas(){
         clearCanvas();
-        setcatImage(1);
-        movecatTo(0,0);
+        setImages(1);
     }
 
     /*************************************
@@ -270,17 +329,41 @@
      *                        CODE THAT GETS RUN BASED ON BLOCKLY BLOCKS                          *
      **********************************************************************************************/
 
-    /*****************************
-     * Changing the cat's Pose *
-     *****************************/
-    function setcatImage(catIndex){
-        if(!catIndex)
-          catIndex = 1;
-        clearCanvas();
-        catImage.src = "images/cat"+catIndex+".png";
-        ctx.drawImage(cat1.image, cat1.x, cat1.y);
-        ctx.save();
-        ctx.restore();
+    /*******************************
+     * Update the cat and dog Pose *
+     *******************************/
+    function updateCatPose(poseNum){
+        arrayOfCatPoses.push(poseNum);
+
+        if(numOfInstructions == 0)
+        {
+          arrayOfDogPoses.push(1);
+          arrayOfWords.push('');
+        }
+        else
+        {
+          arrayOfDogPoses.push(arrayOfDogPoses[numOfInstructions-1]);
+          arrayOfWords.push(arrayOfWords[numOfInstructions-1]);
+        }
+
+        numOfInstructions++;
+    }
+
+    function updateDogPose(poseNum){
+        arrayOfDogPoses.push(poseNum);
+
+        if(numOfInstructions == 0)
+        {
+          arrayOfCatPoses.push(1);
+          arrayOfWords.push('');
+        }
+        else
+        {
+          arrayOfCatPoses.push(arrayOfCatPoses[numOfInstructions-1]);
+          arrayOfWords.push(arrayOfWords[numOfInstructions-1]);
+        }
+
+        numOfInstructions++;
     }
 
     /***********************
@@ -292,4 +375,22 @@
         ctx.restore();
     }
 
+    /*******************************
+     * Display Words on the Screen *
+     *******************************/
+    function say(word){
+        arrayOfWords.push(word);
+
+        if(numOfInstructions == 0)
+        {
+          arrayOfCatPoses.push(1);
+          arrayOfDogPoses.push(1);
+        }
+        else
+        {
+          arrayOfCatPoses.push(arrayOfCatPoses[numOfInstructions-1]);
+          arrayOfDogPoses.push(arrayOfDogPoses[numOfInstructions-1]);
+        }
+        numOfInstructions++;
+    }
 </script>
